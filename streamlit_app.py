@@ -64,11 +64,10 @@ gdp_df = get_gdp_data()
 
 # Set the title that appears at the top of the page.
 '''
-# :earth_americas: GDP dashboard
+# :game_die: Welcome! Check out the event analytics for Board Game Night!
 
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
+All data is exported from the guest lists from my [Partiful Invites](https://www.partiful.com/). The data in this,
+just reflects up until board game night that was on July 18. This dashboard will evolve as I add more filtering and inputs.
 '''
 
 # Add some spacing
