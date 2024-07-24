@@ -36,7 +36,7 @@ def clear_select():
     st.session_state.selected_name = st.session_state.dropdown_name
 
 attendance_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Attendance Count')
-max_attendance = attendance_count[attendance_count['Attendance Count'] == attendance_count['Attendance Count'].max()]
+top_5_attendance = attendance_count.sort_values(by='Attendance Count', ascending=False).head(5)
 
 
 # -----------------------------------------------------------------------------
@@ -52,8 +52,8 @@ just reflects up until board game night that was on July 18. This dashboard will
 
 st.subheader('Fun General Event Metrics')
 
-st.write('Person(s) who attended the most events:')
-st.dataframe(max_attendance)
+st.write('Top 5 Person(s) who attended the most events:')
+st.dataframe(top_5_attendance)
 
 
 # Add some spacing
