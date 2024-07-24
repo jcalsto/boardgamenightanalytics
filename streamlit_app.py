@@ -51,6 +51,6 @@ if filter_guest:
 else:
     filtered_guest_df = guest_df
 
-guest_list = st.dataframe(guest_df.reset_index(drop=True))
+guest_list = st.dataframe(filtered_guest_df.reset_index(drop=True))
 
 
