@@ -33,7 +33,7 @@ guest_df = get_guest_data()
 
 # Set the title that appears at the top of the page.
 '''
-# :game_die: Welcome! Check out the event analytics for Board Game Night!:game_die:
+# :game_die: Welcome to Board Game Night Analytics!:game_die:
 
 All data is exported from the guest lists from my [Partiful Invites](https://www.partiful.com/). The data in this,
 just reflects up until board game night that was on July 18. This dashboard will evolve as I add more filtering and inputs.
