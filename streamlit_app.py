@@ -55,26 +55,44 @@ if 'input_name' not in st.session_state:
     st.session_state.input_name = ''
 if 'selected_name' not in st.session_state:
     st.session_state.selected_name = ''
+if 'toggle' not in st.session_state:
+    st.session_state.toggle = 'Input'
 
-input_name = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):',
+# Toggle between input methods
+toggle = st.radio('Select filter method:', ('Input', 'Dropdown'), index=0 if st.session_state.toggle == 'Input' else 1)
+st.session_state.toggle = toggle
+
+# Filter the DataFrame based on the toggle
+if toggle == 'Input':
+    # Input box for user to filter DataFrame
+    input_name = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):',
                                   value=st.session_state.input_name, 
                                    on_change=clear_input)
-
-name_options = [''] + guest_df['Name'].unique().tolist()
-selected_name = st.selectbox('Select a name to filter the DataFrame:', 
+    # Filter the Dataframe based on input
+    if input_name:
+        filtered_guest_df = guest_df[guest_df['Name'].str.lower() == input_name.lower()]
+    else:
+        filtered_guest_df = guest_df
+    
+else:
+    # Dropdown menu for user to select a name to filter the DataFrame
+    name_options = [''] + guest_df['Name'].unique().tolist()
+    selected_name = st.selectbox('Select a name to filter the DataFrame:', 
                              options=name_options, 
                              index=name_options.index(st.session_state.selected_name) if st.session_state.selected_name in name_options else 0, 
                              on_change=clear_select, 
                              key='dropdown_name')
 
-# Filter the DataFrame based on user input
-if input_name:
-    filtered_guest_df = guest_df[guest_df['Name'].str.lower() == input_name.lower()]
-elif selected_name:
-    filtered_guest_df = guest_df[guest_df['Name'] == selected_name]
-else:
-    filtered_guest_df = guest_df
+    if selected_name:
+        filtered_guest_df = guest_df[guest_df['Name'] == selected_name]
+    else:
+        filtered_guest_df = guest_df
 
+# Update session state
+st.session_state.input_name = input_name if toggle == 'Input' else ''
+st.session_state.selected_name = selected_name if toggle == 'Dropdown' else ''
+
+# Display the filtered Dataframe
 guest_list = st.dataframe(filtered_guest_df.reset_index(drop=True))
 
 
