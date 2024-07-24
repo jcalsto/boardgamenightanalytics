@@ -42,9 +42,10 @@ going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().res
 # Merge the dataframes to calculate the ratio
 attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
 attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
+attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
 
 # Sort by the Going Ratio and select the top 5
-top_5_ratio = attendance_df.sort_values(by='Going Ratio', ascending=False).head(5)
+top_5_ratio = attendance_df['Name'].sort_values(by='Going Ratio', ascending=False).head(5)
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
