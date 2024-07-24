@@ -44,8 +44,11 @@ attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fill
 attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
 attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
 
+filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
+
+
 # Sort by the Going Ratio and select the top 5
-top_5_ratio = attendance_df.sort_values(by='Going Ratio', ascending=False).head(5)
+top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5)
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
