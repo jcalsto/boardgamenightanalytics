@@ -33,7 +33,7 @@ guest_df = get_guest_data()
 
 # Set the title that appears at the top of the page.
 '''
-# :game_die: Welcome! Check out the event analytics for Board Game Night!
+# :game_die: Welcome! Check out the event analytics for Board Game Night!:game_die:
 
 All data is exported from the guest lists from my [Partiful Invites](https://www.partiful.com/). The data in this,
 just reflects up until board game night that was on July 18. This dashboard will evolve as I add more filtering and inputs.
@@ -42,6 +42,14 @@ just reflects up until board game night that was on July 18. This dashboard will
 # Add some spacing
 ''
 ''
+
+filter_guest = st.text_input('Enter your name to filter the DataFrame (check Partiful if your name does not pop up!):')
+
+# Filter the DataFrame based on user input
+if filter_guest:
+    filtered_guest_df = df[df['Name'].str.contains(filter_guest, case=False, na=False)]
+else:
+    filtered_guest_df = guest_df
 
 guest_list = st.dataframe(guest_df.reset_index(drop=True))
 
