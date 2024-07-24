@@ -43,6 +43,6 @@ just reflects up until board game night that was on July 18. This dashboard will
 ''
 ''
 
-guest_list = st.dataframe(guest_df)
+guest_list = st.dataframe(guest_df.reset_index(drop=True))
 
 
