@@ -47,7 +47,7 @@ filter_guest = st.text_input('Enter your name to filter the DataFrame (check Par
 
 # Filter the DataFrame based on user input
 if filter_guest:
-    filtered_guest_df = df[df['Name'].str.contains(filter_guest, case=False, na=False)]
+    filtered_guest_df = guest_df[guest_df['Name'].str.contains(filter_guest, case=False, na=False)]
 else:
     filtered_guest_df = guest_df
 
