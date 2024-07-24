@@ -38,6 +38,8 @@ def clear_select():
 # Calculate total invites and number of 'Going' statuses
 total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
 going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Going Count')
+maybe_count = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count')
+
 
 # Merge the dataframes to calculate the ratio
 attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
@@ -49,6 +51,11 @@ filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Toma
 
 # Sort by the Going Ratio and select the top 5
 top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5)
+top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5)
+
+# Select only the 'Name' column for display
+top_5_names = top_5_ratio[['Name']]
+top_5_maybe_names = top_5_maybe[['Name']]
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
@@ -62,10 +69,20 @@ just reflects up until board game night that was on July 18. This dashboard will
 '''
 
 st.subheader('Fun General Event Metrics')
+col1, col2, col3 = st.columns(3)
 
-st.write('Top 5 Rankings:')
-st.dataframe(top_5_ratio[['Name']])
+with col1:
+    st.write('Top 5 Regulars (with more than 2 events):')
+    st.dataframe(top_5_names)
 
+with col2:
+    st.write('Overall Attendance Metrics')
+    st.metric("Total Invites", len(guest_df))
+    st.metric("Total Going", len(guest_df[guest_df['Status'] == 'Going']))
+
+with col3:
+    st.write('Top 5 attendees with most "Maybe" responses:')
+    st.dataframe(top_5_maybe_names)
 
 # Add some spacing
 ''
