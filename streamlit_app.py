@@ -83,7 +83,7 @@ with col2:
     st.metric("Total Going", len(guest_df[guest_df['Status'] == 'Going']))
 
 with col3:
-    st.write('Top 5 attendees with most "Maybe" responses:')
+    st.write('Top 5 Most Indecisive Attendees')
     st.dataframe(top_5_maybe_names)
 
 # Add some spacing
