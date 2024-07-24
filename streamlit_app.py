@@ -43,11 +43,11 @@ just reflects up until board game night that was on July 18. This dashboard will
 ''
 ''
 
-filter_guest = st.text_input('Enter your name to filter the DataFrame (check Partiful if your name does not pop up!):')
+filter_guest = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):')
 
 # Filter the DataFrame based on user input
 if filter_guest:
-    filtered_guest_df = guest_df[guest_df['Name'].str.contains(filter_guest, case=False, na=False)]
+    filtered_guest_df = guest_df[guest_df['Name'].str.lower() == filter_guest.lower()]
 else:
     filtered_guest_df = guest_df
 
