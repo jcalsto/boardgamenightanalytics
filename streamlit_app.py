@@ -43,14 +43,32 @@ just reflects up until board game night that was on July 18. This dashboard will
 ''
 ''
 
-filter_guest = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):')
+if 'input_name' not in st.session_state:
+    st.session_state.input_name = ''
+if 'selected_name' not in st.session_state:
+    st.session_state.selected_name = ''
+
+input_name = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):',
+                                  value=st.session_state.input_name, 
+                                   on_change=clear_input)
+
+name_options = [''] + guest_df['Name'].unique().tolist()
+selected_name = st.selectbox('Select a name to filter the DataFrame:', 
+                             options=name_options, 
+                             index=name_options.index(st.session_state.selected_name) if st.session_state.selected_name in name_options else 0, 
+                             on_change=clear_select, 
+                             key='dropdown_name')
 
 # Filter the DataFrame based on user input
-if filter_guest:
-    filtered_guest_df = guest_df[guest_df['Name'].str.lower() == filter_guest.lower()]
+if input_name:
+    filtered_guest_df = guest_df[guest_df['Name'].str.lower() == input_name.lower()]
+elif selected_name:
+    filtered_guest_df = guest_df[guest_df['Name'] == selected_name]
 else:
     filtered_guest_df = guest_df
 
 guest_list = st.dataframe(filtered_guest_df.reset_index(drop=True))
+
+
 
 
