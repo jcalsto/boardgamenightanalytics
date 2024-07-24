@@ -35,9 +35,16 @@ def clear_select():
     st.session_state.input_name = ''
     st.session_state.selected_name = st.session_state.dropdown_name
 
-attendance_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Attendance Count')
-top_5_attendance = attendance_count.sort_values(by='Attendance Count', ascending=False).head(5)
+# Calculate total invites and number of 'Going' statuses
+total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
+going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Going Count')
 
+# Merge the dataframes to calculate the ratio
+attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
+attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
+
+# Sort by the Going Ratio and select the top 5
+top_5_ratio = attendance_df.sort_values(by='Going Ratio', ascending=False).head(5)
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
@@ -52,8 +59,8 @@ just reflects up until board game night that was on July 18. This dashboard will
 
 st.subheader('Fun General Event Metrics')
 
-st.write('Top 5 Person(s) who attended the most events:')
-st.dataframe(top_5_attendance)
+st.write('Top 5 Rankings:')
+st.dataframe(top_5_ratio)
 
 
 # Add some spacing
