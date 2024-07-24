@@ -43,7 +43,9 @@ maybe_count = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().res
 
 # Merge the dataframes to calculate the ratio
 attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
+attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fillna(0)
 attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
+
 attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
 
 filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
