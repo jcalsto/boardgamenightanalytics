@@ -27,6 +27,14 @@ def get_guest_data():
 
 guest_df = get_guest_data()
 
+def clear_input():
+    st.session_state.input_name = ''
+    st.session_state.selected_name = ''
+
+def clear_select():
+    st.session_state.input_name = ''
+    st.session_state.selected_name = st.session_state.dropdown_name
+
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
