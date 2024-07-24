@@ -89,8 +89,7 @@ just reflects up until board game night that was on July 18. This dashboard will
 ''
 ''
 
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
+guest_list = st.dataframe(guest_df)
 
 from_year, to_year = st.slider(
     'Which years are you interested in?',
