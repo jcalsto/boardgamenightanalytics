@@ -7,7 +7,6 @@ from pathlib import Path
 st.set_page_config(page_title="Board Game Night Analytics", page_icon=":game_die:")
 
 # Function to load data
-=======
 # Set the title and favicon that appear in the Browser's tab bar.
 st.set_page_config(
     page_title='Board Game Night Analytics!',
