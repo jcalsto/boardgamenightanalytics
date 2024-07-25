@@ -24,10 +24,30 @@ name = query_params.get("name", [None])
 
 if name:
     st.title(f"Information for {name}")
+    
+    # Filter the dataframe for the specific guest
     filtered_df = guest_df[guest_df['Name'].str.lower() == name.lower()]
-    st.dataframe(filtered_df)
+    
+    if not filtered_df.empty:
+        st.dataframe(filtered_df)
 
-    # Calculate the attendance rate
-    attendance_rate = (guest_df['Status'].isin(['Going', 'Maybe']).sum()) / len(guest_df)
-    formatted_attendance_rate = f"{attendance_rate * 100:.2f}%"
-    st.metric("Attendance Rate", formatted_attendance_rate)
+        # Calculate the specific guest's attendance rate
+        total_invites = len(filtered_df)
+        attended_events = filtered_df['Status'].isin(['Going', 'Maybe']).sum()
+        
+        if total_invites > 0:
+            attendance_rate = attended_events / total_invites
+            formatted_attendance_rate = f"{attendance_rate * 100:.2f}%"
+        else:
+            formatted_attendance_rate = "N/A"
+
+        st.metric("Personal Attendance Rate", formatted_attendance_rate)
+
+        # Additional metrics
+        st.metric("Total Invites", total_invites)
+        st.metric("Events Attended", attended_events)
+
+    else:
+        st.write(f"No data found for {name}")
+else:
+    st.write("No name provided")
