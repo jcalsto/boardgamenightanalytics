@@ -147,10 +147,9 @@ if st.button("Submit"):
 # Page navigation based on query params
 query_params = st.query_params.to_dict()
 if query_params.get("page") == "details":
-    name = query_params.get("name", [None])[0]
+    name = query_params.get("name")
     if name:
         exec(open("details.py").read())
-
 
 
 
