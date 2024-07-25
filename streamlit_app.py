@@ -141,20 +141,12 @@ name_input = st.text_input("Name")
 if st.button("Submit"):
     if name_input:
         # Navigate to the detailed information page with the provided name
-        st.query_params(page="details", name=name_input)
-        st.rerun()
+        st.query_params.page = "details"
+        st.query_params.name = name_input
 
 # Page navigation based on query params
-query_params = st.query_params()
-if query_params.get("page") == ["details"]:
-    name = query_params.get("name", [None])[0]
-    if name:
-        # Navigate to the detailed information page
-        st.query_params(page="details", name=name)
-        st.rerun()
-
-# Navigation logic
-if query_params.get("page") == ["details"]:
+query_params = st.query_params.to_dict()
+if query_params.get("page") == "details":
     name = query_params.get("name", [None])[0]
     if name:
         exec(open("details.py").read())
