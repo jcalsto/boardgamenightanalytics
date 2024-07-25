@@ -18,7 +18,6 @@ st.set_page_config(
 # -----------------------------------------------------------------------------
 # Declare some useful functions.
 
->>>>>>> parent of 36969af (Update streamlit_app.py complete rewrite with pages instead)
 @st.cache_data
 def get_guest_data():
     """Grab guest list data to be used over and over again
@@ -34,7 +33,6 @@ def get_guest_data():
 
 guest_df = get_guest_data()
 
-<<<<<<< HEAD
 # Navigation
 page = st.sidebar.selectbox("Choose a page", ["Home", "General Metrics", "Personal Metrics"])
 =======
@@ -45,14 +43,13 @@ def clear_input():
 def clear_select():
     st.session_state.input_name = ''
     st.session_state.selected_name = st.session_state.dropdown_name
->>>>>>> parent of 36969af (Update streamlit_app.py complete rewrite with pages instead)
+
 
 # Calculate total invites and number of 'Going' statuses
 total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
 going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Going Count')
 maybe_count = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count')
 
-<<<<<<< HEAD
 elif page == "General Metrics":
     st.title("General Metrics")
     
@@ -70,8 +67,6 @@ elif page == "General Metrics":
     
     # Add more general metrics as needed
 =======
->>>>>>> parent of 36969af (Update streamlit_app.py complete rewrite with pages instead)
-
 # Merge the dataframes to calculate the ratio
 attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
 attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fillna(0)
@@ -144,7 +139,6 @@ if toggle == 'You know your name':
     if input_name:
         filtered_guest_df = guest_df[guest_df['Name'].str.lower() == input_name.lower()]
     else:
-<<<<<<< HEAD
         st.write("Please enter a name to view personal metrics.")
 
 # You can add more pages as needed
@@ -194,4 +188,3 @@ if query_params.get("page") == "details":
         # Make sure 'details.py' is in the same directory as this script
         exec(open("details.py").read())
 
->>>>>>> parent of 36969af (Update streamlit_app.py complete rewrite with pages instead)
