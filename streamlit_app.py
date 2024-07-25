@@ -3,7 +3,6 @@ import pandas as pd
 import math
 from pathlib import Path
 
-<<<<<<< HEAD
 # Set page config first
 st.set_page_config(page_title="Board Game Night Analytics", page_icon=":game_die:")
 
