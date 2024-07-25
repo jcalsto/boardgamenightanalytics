@@ -74,7 +74,7 @@ st.subheader('Fun General Event Metrics')
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.write('Top 5 Regulars (with more than 2 events):')
+    st.write('Top 5 Regulars (2+ events):')
     st.dataframe(top_5_names)
 
 with col2:
