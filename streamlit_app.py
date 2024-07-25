@@ -104,6 +104,8 @@ toggle = st.radio('How you wanna do this?', ('You know your name', 'Look for it'
 st.session_state.toggle = toggle
 
 # Filter the DataFrame based on the toggle
+filtered_guest_df = pd.DataFrame()  # Default to an empty DataFrame
+
 if toggle == 'You know your name':
     # Input box for user to filter DataFrame
     input_name = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):',
@@ -112,9 +114,6 @@ if toggle == 'You know your name':
     # Filter the Dataframe based on input
     if input_name:
         filtered_guest_df = guest_df[guest_df['Name'].str.lower() == input_name.lower()]
-    else:
-        filtered_guest_df = guest_df
-    
 else:
     # Dropdown menu for user to select a name to filter the DataFrame
     name_options = [''] + guest_df['Name'].unique().tolist()
@@ -126,15 +125,14 @@ else:
 
     if selected_name:
         filtered_guest_df = guest_df[guest_df['Name'] == selected_name]
-    else:
-        filtered_guest_df = guest_df
 
 # Update session state
 st.session_state.input_name = input_name if toggle == 'You know your name' else ''
 st.session_state.selected_name = selected_name if toggle == 'Look for it' else ''
 
-# Display the filtered Dataframe
-guest_list = st.dataframe(filtered_guest_df.reset_index(drop=True))
+# Display the filtered DataFrame if not empty
+if not filtered_guest_df.empty:
+    st.dataframe(filtered_guest_df.reset_index(drop=True))
 
 # Modify the submit button and navigation logic
 if st.button("View Details"):
