@@ -94,59 +94,19 @@ with col3:
 
 if 'input_name' not in st.session_state:
     st.session_state.input_name = ''
-if 'selected_name' not in st.session_state:
-    st.session_state.selected_name = ''
-if 'toggle' not in st.session_state:
-    st.session_state.toggle = 'You know your name'
 
-# Toggle between input methods
-toggle = st.radio('How you wanna do this?', ('You know your name', 'Look for it'), index=0 if st.session_state.toggle == 'Input' else 1)
-st.session_state.toggle = toggle
+# Input box for user to filter DataFrame
+input_name = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):',
+                           value=st.session_state.input_name, 
+                           on_change=clear_input)
 
-# Filter the DataFrame based on the toggle
-filtered_guest_df = pd.DataFrame()  # Default to an empty DataFrame
-
-if toggle == 'You know your name':
-    # Input box for user to filter DataFrame
-    input_name = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):',
-                                  value=st.session_state.input_name, 
-                                   on_change=clear_input)
-    # Filter the Dataframe based on input
-    if input_name:
-        filtered_guest_df = guest_df[guest_df['Name'].str.lower() == input_name.lower()]
-else:
-    # Dropdown menu for user to select a name to filter the DataFrame
-    name_options = [''] + guest_df['Name'].unique().tolist()
-    selected_name = st.selectbox('Look for your name or some other person from the list!', 
-                             options=name_options, 
-                             index=name_options.index(st.session_state.selected_name) if st.session_state.selected_name in name_options else 0, 
-                             on_change=clear_select, 
-                             key='dropdown_name')
-
-    if selected_name:
-        filtered_guest_df = guest_df[guest_df['Name'] == selected_name]
+# Check if the name exists in the DataFrame
+valid_name = False
+if input_name:
+    valid_name = not guest_df[guest_df['Name'].str.lower() == input_name.lower()].empty
 
 # Update session state
-st.session_state.input_name = input_name if toggle == 'You know your name' else ''
-st.session_state.selected_name = selected_name if toggle == 'Look for it' else ''
-
-# Display the filtered DataFrame if not empty
-if not filtered_guest_df.empty:
-    st.dataframe(filtered_guest_df.reset_index(drop=True))
-
-# Modify the submit button and navigation logic
-if st.button("View Details"):
-    name_to_use = ""
-    if toggle == 'You know your name':
-        name_to_use = input_name
-    else:
-        name_to_use = selected_name
-    
-    if name_to_use:
-        # Navigate to the detailed information page with the provided name
-        st.query_params.page = "details"
-        st.query_params.name = name_to_use
-        st.rerun()  # This will rerun the script with the new query parameters
+st.session_state.input_name = input_name
 
 # Page navigation based on query params
 query_params = st.query_params.to_dict()
