@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 
+# Set page config first
+st.set_page_config(page_title="Board Game Night Analytics", page_icon=":game_die:")
+
 # Function to load data
 @st.cache_data
 def get_guest_data():
@@ -10,9 +13,6 @@ def get_guest_data():
 
 # Load the data
 guest_df = get_guest_data()
-
-# Set page config
-st.set_page_config(page_title="Board Game Night Analytics", page_icon=":game_die:")
 
 # Navigation
 page = st.sidebar.selectbox("Choose a page", ["Home", "General Metrics", "Personal Metrics"])
@@ -25,7 +25,6 @@ elif page == "General Metrics":
     st.title("General Metrics")
     
     # Your existing code for general metrics goes here
-    # For example:
     attendance_rate_percentage = ((guest_df['Status'].isin(['Going', 'Maybe']).sum()) / len(guest_df)) * 100
     formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
     
@@ -70,3 +69,5 @@ elif page == "Personal Metrics":
             st.write("No data found for this name.")
     else:
         st.write("Please enter a name to view personal metrics.")
+
+# You can add more pages as needed
