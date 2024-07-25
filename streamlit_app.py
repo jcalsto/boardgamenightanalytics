@@ -141,16 +141,16 @@ name_input = st.text_input("Name")
 if st.button("Submit"):
     if name_input:
         # Navigate to the detailed information page with the provided name
-        st.experimental_set_query_params(page="details", name=name_input)
+        st.query_params(page="details", name=name_input)
         st.rerun()
 
 # Page navigation based on query params
-query_params = st.experimental_get_query_params()
+query_params = st.query_params()
 if query_params.get("page") == ["details"]:
     name = query_params.get("name", [None])[0]
     if name:
         # Navigate to the detailed information page
-        st.experimental_set_query_params(page="details", name=name)
+        st.query_params(page="details", name=name)
         st.rerun()
 
 # Navigation logic
