@@ -41,23 +41,25 @@ if name:
         else:
             formatted_attendance_rate = "N/A"
 
-        # Create three columns
-        col1, col2, col3 = st.columns(3)
-
+                # Create three columns with adjusted widths
+        col1, col2, col3 = st.columns([1, 1, 1.5])
+        
         # Column 1: Attendance metrics
         with col1:
             st.subheader("Attendance Metrics")
             st.metric("Personal Attendance Rate", formatted_attendance_rate)
             st.metric("Total Invites", total_invites)
             st.metric("Events Attended", attended_events)
-
+            st.write("")  # Add some vertical spacing
+        
         # Column 2: Event breakdown
         with col2:
             st.subheader("Event Breakdown")
             st.metric("'Going' Events", going_events)
             st.metric("'Maybe' Events", maybe_events)
             st.metric("Missed Events", total_invites - attended_events)
-
+            st.write("")  # Add some vertical spacing
+        
         # Column 3: Recent activity
         with col3:
             st.subheader("Recent Activity")
