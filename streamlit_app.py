@@ -33,7 +33,7 @@ guest_df = get_guest_data()
 
 # Navigation
 page = st.sidebar.selectbox("Choose a page", ["Home", "General Metrics", "Personal Metrics"])
-=======
+
 def clear_input():
     st.session_state.input_name = ''
     st.session_state.selected_name = ''
@@ -64,7 +64,6 @@ elif page == "General Metrics":
         st.metric("Overall Attendance Rate", formatted_attendance_rate)
     
     # Add more general metrics as needed
-=======
 # Merge the dataframes to calculate the ratio
 attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
 attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fillna(0)
@@ -140,7 +139,6 @@ if toggle == 'You know your name':
         st.write("Please enter a name to view personal metrics.")
 
 # You can add more pages as needed
-=======
         filtered_guest_df = guest_df
     
 else:
