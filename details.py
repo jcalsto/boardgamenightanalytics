@@ -65,10 +65,6 @@ if name:
             for _, event in recent_events.iterrows():
                 st.write(f"{event['Date']}: {event['Status']}")
 
-        # Display full history below the columns
-        st.subheader("Full Event History")
-        st.dataframe(filtered_df.sort_values('Date', ascending=False))
-
     else:
         st.write(f"No data found for {name}")
 else:
