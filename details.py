@@ -20,7 +20,7 @@ guest_df = get_guest_data()
 
 # Get the name from query params
 query_params = st.query_params.to_dict()
-name = query_params.get("name", [None])[0]
+name = query_params.get("name", [None])
 
 if name:
     st.title(f"Information for {name}")
