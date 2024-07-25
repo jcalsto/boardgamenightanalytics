@@ -100,6 +100,9 @@ valid_name = False
 if input_name:
     valid_name = not guest_df[guest_df['Name'].str.lower() == input_name.lower()].empty
 
+# Create a placeholder for validation result
+validation_result = st.empty()
+
 col1, col2 = st.columns(2)
 
 with col1:
