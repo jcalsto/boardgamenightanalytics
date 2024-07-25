@@ -136,6 +136,29 @@ st.session_state.selected_name = selected_name if toggle == 'Look for it' else '
 # Display the filtered Dataframe
 guest_list = st.dataframe(filtered_guest_df.reset_index(drop=True))
 
+name_input = st.text_input("Name")
+
+if st.button("Submit"):
+    if name_input:
+        # Navigate to the detailed information page with the provided name
+        st.experimental_set_query_params(page="details", name=name_input)
+        st.experimental_rerun()
+
+# Page navigation based on query params
+query_params = st.experimental_get_query_params()
+if query_params.get("page") == ["details"]:
+    name = query_params.get("name", [None])[0]
+    if name:
+        # Navigate to the detailed information page
+        st.experimental_set_query_params(page="details", name=name)
+        st.experimental_rerun()
+
+# Navigation logic
+if query_params.get("page") == ["details"]:
+    name = query_params.get("name", [None])[0]
+    if name:
+        exec(open("details.py").read())
+
 
 
 
