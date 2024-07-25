@@ -28,7 +28,7 @@ guest_df = get_guest_data()
 
 def clear_input():
     st.session_state.input_name = ''
-    st.experimental_set_query_params()  # Clear query parameters
+    st.query_params.clear()  # Clear query parameters
 
 # Calculate total invites and number of 'Going' statuses
 total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
