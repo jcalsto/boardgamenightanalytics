@@ -136,20 +136,25 @@ st.session_state.selected_name = selected_name if toggle == 'Look for it' else '
 # Display the filtered Dataframe
 guest_list = st.dataframe(filtered_guest_df.reset_index(drop=True))
 
-name_input = st.text_input("Name")
-
-if st.button("Submit"):
-    if name_input:
+# Modify the submit button and navigation logic
+if st.button("View Details"):
+    name_to_use = ""
+    if toggle == 'You know your name':
+        name_to_use = input_name
+    else:
+        name_to_use = selected_name
+    
+    if name_to_use:
         # Navigate to the detailed information page with the provided name
         st.query_params.page = "details"
-        st.query_params.name = name_input
+        st.query_params.name = name_to_use
+        st.rerun()  # This will rerun the script with the new query parameters
 
 # Page navigation based on query params
 query_params = st.query_params.to_dict()
 if query_params.get("page") == "details":
     name = query_params.get("name")
     if name:
+        # Make sure 'details.py' is in the same directory as this script
         exec(open("details.py").read())
-
-
 
