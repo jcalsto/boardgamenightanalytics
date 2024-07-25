@@ -19,7 +19,7 @@ def get_guest_data():
 guest_df = get_guest_data()
 
 # Get the name from query params
-query_params = st.experimental_get_query_params()
+query_params = st.query_params()
 name = query_params.get("name", [None])[0]
 
 if name:
