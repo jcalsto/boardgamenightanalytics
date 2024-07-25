@@ -49,7 +49,7 @@ attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Tot
 attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
 
 filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
-attendance_rate = (guest_df['Status'].isin(['Going', 'Maybe']).sum()) / len(guest_df)
+attendance_rate_percentage = ((guest_df['Status'].isin(['Going', 'Maybe']).sum()) / len(guest_df)) * 100
 formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
 
 # Sort by the Going Ratio and select the top 5
