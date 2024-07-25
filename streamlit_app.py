@@ -105,8 +105,14 @@ valid_name = False
 if input_name:
     valid_name = not guest_df[guest_df['Name'].str.lower() == input_name.lower()].empty
 
-# Update session state
-st.session_state.input_name = input_name
+# Modify the submit button and navigation logic
+if st.button("View Details"):
+    if valid_name:
+        # Navigate to the detailed information page with the provided name
+        st.query_params.update(page="details", name=input_name)
+        st.experimental_rerun()  # This will rerun the script with the new query parameters
+    else:
+        st.error("Name not found. Please check the spelling or try again.")
 
 # Page navigation based on query params
 query_params = st.query_params.to_dict()
