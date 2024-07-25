@@ -29,11 +29,11 @@ if name:
     filtered_df = guest_df[guest_df['Name'].str.lower() == name.lower()]
     
     if not filtered_df.empty:
-        st.dataframe(filtered_df)
-
-        # Calculate the specific guest's attendance rate
+        # Calculate metrics
         total_invites = len(filtered_df)
         attended_events = filtered_df['Status'].isin(['Going', 'Maybe']).sum()
+        going_events = filtered_df['Status'].eq('Going').sum()
+        maybe_events = filtered_df['Status'].eq('Maybe').sum()
         
         if total_invites > 0:
             attendance_rate = attended_events / total_invites
@@ -41,11 +41,33 @@ if name:
         else:
             formatted_attendance_rate = "N/A"
 
-        st.metric("Personal Attendance Rate", formatted_attendance_rate)
+        # Create three columns
+        col1, col2, col3 = st.columns(3)
 
-        # Additional metrics
-        st.metric("Total Invites", total_invites)
-        st.metric("Events Attended", attended_events)
+        # Column 1: Attendance metrics
+        with col1:
+            st.subheader("Attendance Metrics")
+            st.metric("Personal Attendance Rate", formatted_attendance_rate)
+            st.metric("Total Invites", total_invites)
+            st.metric("Events Attended", attended_events)
+
+        # Column 2: Event breakdown
+        with col2:
+            st.subheader("Event Breakdown")
+            st.metric("'Going' Events", going_events)
+            st.metric("'Maybe' Events", maybe_events)
+            st.metric("Missed Events", total_invites - attended_events)
+
+        # Column 3: Recent activity
+        with col3:
+            st.subheader("Recent Activity")
+            recent_events = filtered_df.sort_values('Date', ascending=False).head(5)
+            for _, event in recent_events.iterrows():
+                st.write(f"{event['Date']}: {event['Status']}")
+
+        # Display full history below the columns
+        st.subheader("Full Event History")
+        st.dataframe(filtered_df.sort_values('Date', ascending=False))
 
     else:
         st.write(f"No data found for {name}")
