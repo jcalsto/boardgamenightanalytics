@@ -142,7 +142,7 @@ if st.button("Submit"):
     if name_input:
         # Navigate to the detailed information page with the provided name
         st.experimental_set_query_params(page="details", name=name_input)
-        st.experimental_rerun()
+        st.rerun()
 
 # Page navigation based on query params
 query_params = st.experimental_get_query_params()
@@ -151,7 +151,7 @@ if query_params.get("page") == ["details"]:
     if name:
         # Navigate to the detailed information page
         st.experimental_set_query_params(page="details", name=name)
-        st.experimental_rerun()
+        st.rerun()
 
 # Navigation logic
 if query_params.get("page") == ["details"]:
