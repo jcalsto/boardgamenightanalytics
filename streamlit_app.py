@@ -50,6 +50,7 @@ attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
 
 filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
 attendance_rate = (guest_df['Status'].isin(['Going', 'Maybe']).sum()) / len(guest_df)
+formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
 
 # Sort by the Going Ratio and select the top 5
 top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5)
@@ -81,7 +82,7 @@ with col2:
     st.write('Overall Attendance Metrics')
     st.metric("Total Invites", len(guest_df))
     st.metric("Total Going", len(guest_df[guest_df['Status'] == 'Going']))
-    st.metric("Attendance Rate", attendance_rate)
+    st.metric("Attendance Rate", formatted_attendance_rate)
 
 with col3:
     st.write('Top 5 Most Indecisive Attendees')
