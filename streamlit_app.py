@@ -53,8 +53,8 @@ attendance_rate_percentage = ((guest_df['Status'].isin(['Going', 'Maybe']).sum()
 formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
 
 # Sort by the Going Ratio and select the top 5
-top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5)
-top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5)
+top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5).reset_index()
+top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5).reset_index()
 
 # Select only the 'Name' column for display
 top_5_names = top_5_ratio[['Name']]
