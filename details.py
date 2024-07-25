@@ -65,6 +65,8 @@ if name:
             for _, event in recent_events.iterrows():
                 st.write(f"{event['Date']}: {event['Status']}")
 
+        st.dataframe(filtered_guest_df.reset_index(drop=True))
+
     else:
         st.write(f"No data found for {name}")
 else:
