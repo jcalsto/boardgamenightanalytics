@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import math
 from pathlib import Path
 
 # Set the title and favicon that appear in the Browser's tab bar.
@@ -29,11 +28,7 @@ guest_df = get_guest_data()
 
 def clear_input():
     st.session_state.input_name = ''
-    st.session_state.selected_name = ''
-
-def clear_select():
-    st.session_state.input_name = ''
-    st.session_state.selected_name = st.session_state.dropdown_name
+    st.experimental_set_query_params()  # Clear query parameters
 
 # Calculate total invites and number of 'Going' statuses
 total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
@@ -105,14 +100,23 @@ valid_name = False
 if input_name:
     valid_name = not guest_df[guest_df['Name'].str.lower() == input_name.lower()].empty
 
-# Modify the submit button and navigation logic
-if st.button("View Details"):
-    if valid_name:
-        # Navigate to the detailed information page with the provided name
-        st.query_params.update(page="details", name=input_name)
-        st.experimental_rerun()  # This will rerun the script with the new query parameters
-    else:
-        st.error("Name not found. Please check the spelling or try again.")
+col1, col2 = st.columns(2)
+
+with col1:
+    # Modify the submit button and navigation logic
+    if st.button("View Details"):
+        if valid_name:
+            # Navigate to the detailed information page with the provided name
+            st.query_params.update(page="details", name=input_name)
+            st.rerun()  # This will rerun the script with the new query parameters
+        else:
+            st.error("Name not found. Please check the spelling or try again.")
+
+with col2:
+    if st.button("Clear"):
+        st.session_state.input_name = ''
+        st.query_params.clear()# Clear query parameters
+        st.rerun()  # This will rerun the script and clear the input
 
 # Page navigation based on query params
 query_params = st.query_params.to_dict()
