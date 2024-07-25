@@ -3,10 +3,6 @@ import pandas as pd
 import math
 from pathlib import Path
 
-# Set page config first
-st.set_page_config(page_title="Board Game Night Analytics", page_icon=":game_die:")
-
-# Function to load data
 # Set the title and favicon that appear in the Browser's tab bar.
 st.set_page_config(
     page_title='Board Game Night Analytics!',
@@ -31,9 +27,6 @@ def get_guest_data():
 
 guest_df = get_guest_data()
 
-# Navigation
-page = st.sidebar.selectbox("Choose a page", ["Home", "General Metrics", "Personal Metrics"])
-
 def clear_input():
     st.session_state.input_name = ''
     st.session_state.selected_name = ''
@@ -42,28 +35,12 @@ def clear_select():
     st.session_state.input_name = ''
     st.session_state.selected_name = st.session_state.dropdown_name
 
-
 # Calculate total invites and number of 'Going' statuses
 total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
 going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Going Count')
 maybe_count = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count')
 
-elif page == "General Metrics":
-    st.title("General Metrics")
-    
-    # Your existing code for general metrics goes here
-    attendance_rate_percentage = ((guest_df['Status'].isin(['Going', 'Maybe']).sum()) / len(guest_df)) * 100
-    formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Total Invites", len(guest_df))
-    with col2:
-        st.metric("Total Going", len(guest_df[guest_df['Status'] == 'Going']))
-    with col3:
-        st.metric("Overall Attendance Rate", formatted_attendance_rate)
-    
-    # Add more general metrics as needed
+
 # Merge the dataframes to calculate the ratio
 attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
 attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fillna(0)
@@ -136,9 +113,6 @@ if toggle == 'You know your name':
     if input_name:
         filtered_guest_df = guest_df[guest_df['Name'].str.lower() == input_name.lower()]
     else:
-        st.write("Please enter a name to view personal metrics.")
-
-# You can add more pages as needed
         filtered_guest_df = guest_df
     
 else:
@@ -183,4 +157,3 @@ if query_params.get("page") == "details":
     if name:
         # Make sure 'details.py' is in the same directory as this script
         exec(open("details.py").read())
-
