@@ -120,49 +120,51 @@ with tab3:
     st.write("### Average Response Time")
     st.write(f"The average response time is {average_response_time:.2f} days.")
 
-# Add some spacing
-st.write("")
-st.write("")
-
-if 'input_name' not in st.session_state:
-    st.session_state.input_name = ''
-
-# Input box for user to filter DataFrame
-input_name = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):',
-                           value=st.session_state.input_name, 
-                           on_change=clear_input)
-
-# Check if the name exists in the DataFrame
-valid_name = False
-if input_name:
-    valid_name = not guest_df[guest_df['Name'].str.lower() == input_name.lower()].empty
-
-# Create a placeholder for validation result
-validation_result = st.empty()
-
-col1, col2 = st.columns(2)
-
-with col1:
-    # Modify the submit button and navigation logic
-    if st.button("View Details"):
-        if valid_name:
-            # Navigate to the detailed information page with the provided name
-            st.query_params.page = "details"
-            st.query_params.name = input_name
-            st.rerun()  # This will rerun the script with the new query parameters
-        else:
-            validation_result.error("Name not found. Please check the spelling or try again.")
-
-with col2:
-    if st.button("Clear"):
+with tab4:
+    st.write("### View Details")
+    if 'input_name' not in st.session_state:
         st.session_state.input_name = ''
-        st.query_params.clear()  # Clear query parameters
-        st.rerun()  # This will rerun the script and clear the input
 
-# Page navigation based on query params
-query_params = st.query_params.to_dict()
-page = query_params.get("page", [None])[0]  # Default to None if "page" is not in the query params
-if page == "details":
+    # Input box for user to filter DataFrame
+    input_name = st.text_input('Enter your name to check the events you went to! (check Partiful if your name does not pop up!):',
+                               value=st.session_state.input_name, 
+                               on_change=clear_input)
+
+    # Check if the name exists in the DataFrame
+    valid_name = False
+    if input_name:
+        valid_name = not guest_df[guest_df['Name'].str.lower() == input_name.lower()].empty
+
+    # Create a placeholder for validation result
+    validation_result = st.empty()
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # Modify the submit button and navigation logic
+        if st.button("View Details"):
+            if valid_name:
+                # Navigate to the detailed information page with the provided name
+                st.query_params.page = "details"
+                st.query_params.name = input_name
+                st.rerun()  # This will rerun the script with the new query parameters
+            else:
+                validation_result.error("Name not found. Please check the spelling or try again.")
+
+    with col2:
+        if st.button("Clear"):
+            st.session_state.input_name = ''
+            st.query_params.clear()  # Clear query parameters
+            st.rerun()  # This will rerun the script and clear the input
+
+    # Page navigation based on query params
+    query_params = st.query_params.to_dict()
+    page = query_params.get("page", [None])[0]  # Default to None if "page" is not in the query params
+    if page == "details":
+        name = query_params.get("name", [None])[0]
+        if name:
+            # Make sure 'details.py' is in the same directory as this script
+            exec(open("details.py").read())
     name = query_params.get("name", [None])[0]
     if name:
         # Make sure 'details.py' is in the same directory as this script
