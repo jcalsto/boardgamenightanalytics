@@ -5,15 +5,10 @@ from pathlib import Path
 
 @st.cache_data
 def get_guest_data():
-    """Grab guest list data to be used over and over again
-    """
-
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/Main_Guest_Table.csv'
-    raw_guest_df = pd.read_csv(DATA_FILENAME)
-
+    """Grab guest list data to be used over and over again"""
+    DATA_FILENAME = Path(__file__).parent / 'data/Main_Guest_Table.csv'
+    raw_guest_df = pd.read_csv(DATA_FILENAME, parse_dates=['Date', 'RSVP date'])
     guest_df = raw_guest_df
-
     return guest_df
 
 guest_df = get_guest_data()
@@ -40,7 +35,11 @@ if name:
             formatted_attendance_rate = f"{attendance_rate * 100:.2f}%"
         else:
             formatted_attendance_rate = "N/A"
-
+        
+        # Calculate average response time
+        filtered_df['ResponseTime'] = (filtered_df['Date'] - filtered_df['RSVP date']).dt.days
+        average_response_time = filtered_df['ResponseTime'].mean()
+        
         # Create three columns
         col1, col2, col3 = st.columns(3)
 
@@ -64,6 +63,7 @@ if name:
             recent_events = filtered_df.sort_values('Date', ascending=False).head(5)
             for _, event in recent_events.iterrows():
                 st.write(f"{event['Date']}: {event['Status']}")
+            st.write(f"Average Response Time: {average_response_time:.2f} days")
 
         st.dataframe(filtered_df.reset_index(drop=True))
 
