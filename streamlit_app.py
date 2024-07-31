@@ -103,7 +103,7 @@ with col3:
     st.dataframe(top_5_maybe_names)
 
 # Tabs for visualizations
-tab1, tab2, tab3, tab4 = st.tabs(["Going/Invite Ratio Over Time", "Breakdown of Attendees", "Average Response Time", "View Details"])
+tab1, tab2, tab3, tab4 = st.tabs(["Going/Invite Ratio Over Time", "Breakdown of Attendees", "Average Response Time", "Input Name"])
 
 with tab1:
     st.write("### Going/Invite Ratio Over Time")
@@ -121,7 +121,7 @@ with tab3:
     st.write(f"The average response time is {average_response_time:.2f} days.")
 
 with tab4:
-    st.write("### View Details")
+    st.write("### Input Name")
     if 'input_name' not in st.session_state:
         st.session_state.input_name = ''
 
