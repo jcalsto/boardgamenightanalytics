@@ -32,11 +32,32 @@ def clear_input():
     st.query_params.clear()  # Clear query parameters
 
 # Calculate total invites and number of 'Going' statuses
-total_invites = guest_df.groupby('Date').size().reset_index(name='Total Invites')
-going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Date').size().reset_index(name='Going Count')
+total_invites = guest_df.groupby(['Date', 'Name']).size().reset_index(name='Total Invites')
+going_count = guest_df[guest_df['Status'] == 'Going'].groupby(['Date', 'Name']).size().reset_index(name='Going Count')
 
 # Merge the dataframes for the line chart
-invites_and_goings = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
+invites_and_goings = pd.merge(total_invites.groupby('Date').sum().reset_index(), 
+                              going_count.groupby('Date').sum().reset_index(), 
+                              on='Date', how='left').fillna(0)
+
+# Calculate the attendance metrics
+attendance_df = pd.merge(total_invites, going_count, on=['Date', 'Name'], how='left').fillna(0)
+attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
+
+# Calculate 'Maybe Count'
+maybe_count = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count')
+attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fillna(0)
+
+# Filter for more than 2 events
+attendance_df = attendance_df.groupby('Name').filter(lambda x: x['Total Invites'].sum() > 2)
+
+filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
+top_5_ratio = filtered_attendance_df.groupby('Name')['Going Ratio'].mean().sort_values(ascending=False).head(5).reset_index()
+top_5_maybe = filtered_attendance_df.groupby('Name')['Maybe Count'].sum().sort_values(ascending=False).head(5).reset_index()
+
+# Select only the 'Name' column for display
+top_5_names = top_5_ratio[['Name']]
+top_5_maybe_names = top_5_maybe[['Name']]
 
 # Calculate the breakdown of attendees
 attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
@@ -45,18 +66,6 @@ attendee_breakdown.columns = ['Status', 'Count']
 # Calculate average response time
 guest_df['RSVP date'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
 average_response_time = guest_df['RSVP date'].mean()
-
-# Calculate the top regulars, attendance metrics, and indecisive attendees
-attendance_df = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
-attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
-
-filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
-top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5).reset_index()
-top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5).reset_index()
-
-# Select only the 'Name' column for display
-top_5_names = top_5_ratio[['Name']]
-top_5_maybe_names = top_5_maybe[['Name']]
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
