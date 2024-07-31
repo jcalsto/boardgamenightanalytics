@@ -24,6 +24,34 @@ def clear_input():
     st.session_state.input_name = ''
     st.query_params.clear()  # Clear query parameters
 
+# Calculate total invites and number of 'Going' statuses
+total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
+going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Going Count')
+maybe_count = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count')
+
+# Merge the dataframes to calculate the ratio
+attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
+attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fillna(0)
+attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
+
+# Filter out attendees with fewer than 3 total invites
+attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
+
+# Exclude "Jorrel Sto Tomas" for top 5 ratio calculation
+filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
+
+# Sort by the Going Ratio and select the top 5
+top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5).reset_index(drop=True)
+top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5).reset_index(drop=True)
+
+# Select only the 'Name' column for display
+top_5_names = top_5_ratio[['Name']]
+top_5_maybe_names = top_5_maybe[['Name']]
+
+# Calculate Attendance Rate
+attendance_rate_percentage = ((guest_df['Status'] == 'Going').sum() / len(guest_df)) * 100
+formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
+
 # Calculate total invites and number of 'Going' statuses by Date
 total_invites_by_date = guest_df.groupby('Date').size().reset_index(name='Total Invites')
 going_count_by_date = guest_df[guest_df['Status'] == 'Going'].groupby('Date').size().reset_index(name='Going Count')
