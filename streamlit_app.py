@@ -28,6 +28,14 @@ def clear_input():
     st.session_state.input_name = ''
     st.query_params.clear()  # Clear query parameters
 
+# Set the default active tab to 'Going/Invite Ratio Over Time'
+if 'active_tab' not in st.session_state:
+    st.session_state.active_tab = 'Going/Invite Ratio Over Time'
+
+# Set the tab state to View Details when 'View Details' is clicked
+def set_active_tab(tab_name):
+    st.session_state.active_tab = tab_name
+
 # Calculate total invites and number of 'Going' statuses
 total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
 going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Going Count')
@@ -106,6 +114,16 @@ with col3:
 
 # Tabs for visualizations
 tab1, tab2, tab3, tab4 = st.tabs(["Going/Invite Ratio Over Time", "Breakdown of Attendees", "Average Response Time", "Input Name"])
+
+# Set the correct tab state on rerun
+if st.session_state.active_tab == 'Going/Invite Ratio Over Time':
+    st.select_tab(tab1)
+elif st.session_state.active_tab == 'Breakdown of Attendees':
+    st.select_tab(tab2)
+elif st.session_state.active_tab == 'Average Response Time':
+    st.select_tab(tab3)
+elif st.session_state.active_tab == 'View Details':
+    st.select_tab(tab4)
 
 with tab1:
     st.write("### Going/Invite Ratio Over Time")
