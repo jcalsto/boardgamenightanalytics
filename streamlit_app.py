@@ -39,7 +39,7 @@ attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fill
 attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
 
 # Filter out attendees with fewer than 3 total invites
-attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
+attendance_df = attendance_df[attendance_df['Total Invites'] > 3]
 
 # Exclude "Jorrel Sto Tomas" for top 5 ratio calculation
 filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
