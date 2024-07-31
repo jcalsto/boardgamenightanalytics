@@ -103,7 +103,7 @@ with col3:
     st.dataframe(top_5_maybe_names)
 
 # Tabs for visualizations
-tab1, tab2, tab3 = st.tabs(["Going/Invite Ratio Over Time", "Breakdown of Attendees", "Average Response Time"])
+tab1, tab2, tab3, tab4 = st.tabs(["Going/Invite Ratio Over Time", "Breakdown of Attendees", "Average Response Time", "View Details"])
 
 with tab1:
     st.write("### Going/Invite Ratio Over Time")
