@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
 from pathlib import Path
 
 # Set the title and favicon that appear in the Browser's tab bar.
@@ -95,12 +95,10 @@ st.write("")
 st.write("### Invites and Goings Over Time")
 st.line_chart(invites_and_goings.set_index('Date'))
 
-# Visualization for Breakdown of Attendees
+# Visualization for Breakdown of Attendees using Plotly
 st.write("### Breakdown of Attendees")
-fig, ax = plt.subplots()
-ax.pie(attendee_breakdown['Count'], labels=attendee_breakdown['Status'], autopct='%1.1f%%', startangle=90)
-ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-st.pyplot(fig)
+fig = px.pie(attendee_breakdown, values='Count', names='Status', title='Breakdown of Attendees')
+st.plotly_chart(fig)
 
 # Average Response Time
 st.write("### Average Response Time")
