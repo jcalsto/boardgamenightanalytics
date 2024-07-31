@@ -122,7 +122,7 @@ elif st.session_state.active_tab == 'Breakdown of Attendees':
     st.select_tab(tab2)
 elif st.session_state.active_tab == 'Average Response Time':
     st.select_tab(tab3)
-elif st.session_state.active_tab == 'View Details':
+elif st.session_state.active_tab == 'Input Name':
     st.select_tab(tab4)
 
 with tab1:
