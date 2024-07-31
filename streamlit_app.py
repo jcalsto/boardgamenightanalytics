@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from pathlib import Path
 
 # Set the title and favicon that appear in the Browser's tab bar.
@@ -44,8 +43,8 @@ attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
 attendee_breakdown.columns = ['Status', 'Count']
 
 # Calculate average response time
-guest_df['ResponseTime'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
-average_response_time = guest_df['ResponseTime'].mean()
+guest_df['RSVP date'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
+average_response_time = guest_df['RSVP date'].mean()
 
 # Calculate the top regulars, attendance metrics, and indecisive attendees
 attendance_df = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
@@ -95,10 +94,9 @@ st.write("")
 st.write("### Invites and Goings Over Time")
 st.line_chart(invites_and_goings.set_index('Date'))
 
-# Visualization for Breakdown of Attendees using Plotly
+# Visualization for Breakdown of Attendees using Streamlit's native pie chart
 st.write("### Breakdown of Attendees")
-fig = px.pie(attendee_breakdown, values='Count', names='Status', title='Breakdown of Attendees')
-st.plotly_chart(fig)
+st.pie_chart(attendee_breakdown.set_index('Status'))
 
 # Average Response Time
 st.write("### Average Response Time")
