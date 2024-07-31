@@ -29,8 +29,7 @@ def clear_input():
     st.query_params.clear()  # Clear query parameters
 
 # Identify the last four events
-last_four_events = guest_df['Date'].dropna().unique().sort_values()
-last_four_events = last_four_events[-4:]
+last_four_events = guest_df['Date'].dropna().sort_values().unique()[-4:]
 
 # Filter the dataframe to include only attendees of the last four events
 recent_events_df = guest_df[guest_df['Date'].isin(last_four_events)]
