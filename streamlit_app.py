@@ -14,8 +14,7 @@ st.set_page_config(
 
 @st.cache_data
 def get_guest_data():
-    """Grab guest list data to be used over and over again
-    """
+    """Grab guest list data to be used over and over again"""
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
     DATA_FILENAME = Path(__file__).parent / 'data/Main_Guest_Table.csv'
     raw_guest_df = pd.read_csv(DATA_FILENAME, parse_dates=['Date', 'RSVP date'])
@@ -47,16 +46,19 @@ guest_df['ResponseTime'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
 average_response_time = guest_df['ResponseTime'].mean()
 
 # Fun General Event Metrics
-attendance_df = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
-attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
-filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
+if 'Name' in guest_df.columns:
+    attendance_df = pd.merge(guest_df[['Name', 'Date']], going_count, on='Date', how='left').fillna(0)
+    attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
+    filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
 
-top_5_ratio = filtered_attendance_df.sort_values(by='Going Count', ascending=False).head(5).reset_index()
-top_5_maybe = filtered_attendance_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count').sort_values(by='Maybe Count', ascending=False).head(5)
+    top_5_ratio = filtered_attendance_df.sort_values(by='Going Count', ascending=False).head(5).reset_index()
+    top_5_maybe = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count').sort_values(by='Maybe Count', ascending=False).head(5)
 
-# Select only the 'Name' column for display
-top_5_names = top_5_ratio[['Name']]
-top_5_maybe_names = top_5_maybe[['Name']]
+    # Select only the 'Name' column for display
+    top_5_names = top_5_ratio[['Name']]
+    top_5_maybe_names = top_5_maybe[['Name']]
+else:
+    st.error("The 'Name' column is missing from the dataset.")
 
 # Calculate Attendance Rate
 attendance_rate_percentage = ((guest_df['Status'] == 'Going').sum() / len(guest_df)) * 100
