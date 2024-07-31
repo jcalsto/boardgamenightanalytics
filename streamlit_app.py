@@ -28,7 +28,7 @@ guest_df = get_guest_data()
 
 def clear_input():
     st.session_state.input_name = ''
-    st.experimental_set_query_params()  # Clear query parameters
+    st.query_params.clear()  # Clear query parameters
 
 # Calculate total invites and number of 'Going' statuses
 total_invites = guest_df.groupby('Date').size().reset_index(name='Total Invites')
@@ -105,7 +105,7 @@ with tab2:
     st.pyplot(fig)
 
 with tab3:
-    st.write("### Average Response Time (time from invite to response)")
+    st.write("### Average Response Time")
     st.write(f"The average response time is {average_response_time:.2f} days.")
 
 # Add some spacing
@@ -135,21 +135,21 @@ with col1:
     if st.button("View Details"):
         if valid_name:
             # Navigate to the detailed information page with the provided name
-            st.experimental_set_query_params(page="details", name=input_name)
-            st.experimental_rerun()  # This will rerun the script with the new query parameters
+            st.query_params.page = "details"
+            st.query_params.name = input_name
+            st.rerun()  # This will rerun the script with the new query parameters
         else:
             validation_result.error("Name not found. Please check the spelling or try again.")
 
 with col2:
     if st.button("Clear"):
         st.session_state.input_name = ''
-        st.experimental_set_query_params()  # Clear query parameters
-        st.experimental_rerun()  # This will rerun the script and clear the input
+        st.query_params.clear()  # Clear query parameters
+        st.rerun()  # This will rerun the script and clear the input
 
 # Page navigation based on query params
-query_params = st.experimental_get_query_params()
-if query_params.get("page") == ["details"]:
-    name = query_params.get("name", [None])[0]
+if st.query_params.page == "details":
+    name = st.query_params.get("name", None)
     if name:
         # Make sure 'details.py' is in the same directory as this script
         exec(open("details.py").read())
