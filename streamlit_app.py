@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 from pathlib import Path
 
 # Set the title and favicon that appear in the Browser's tab bar.
@@ -107,7 +109,28 @@ tab1, tab2, tab3, tab4 = st.tabs(["Going/Invite Ratio Over Time", "Breakdown of 
 
 with tab1:
     st.write("### Going/Invite Ratio Over Time")
-    st.line_chart(invites_and_goings.set_index('Date')['Going/Invite Ratio'])
+    fig = go.Figure()
+
+    # Add the data
+    fig.add_trace(go.Scatter(
+        x=invites_and_goings['Date'],
+        y=invites_and_goings['Going/Invite Ratio'],
+        mode='lines+markers',
+        name='Going/Invite Ratio',
+        hoverinfo='text',
+        text=[f"Date: {d}<br>Ratio: {r:.2f}%" for d, r in zip(invites_and_goings['Date'], invites_and_goings['Going/Invite Ratio'])]
+    ))
+
+    # Customize the layout
+    fig.update_layout(
+        title="Going/Invite Ratio Over Time",
+        xaxis_title="Date",
+        yaxis_title="Going/Invite Ratio (%)",
+        hovermode="closest"
+    )
+
+    # Show the plot
+    st.plotly_chart(fig)
 
 with tab2:
     st.write("### Breakdown of Attendees")
