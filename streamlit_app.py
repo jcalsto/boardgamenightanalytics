@@ -17,11 +17,33 @@ def get_guest_data():
     """Grab guest list data to be used over and over again"""
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
     DATA_FILENAME = Path(__file__).parent / 'data/Main_Guest_Table.csv'
-    raw_guest_df = pd.read_csv(DATA_FILENAME, parse_dates=['Date', 'RSVP date'])
-
-    guest_df = raw_guest_df
-
-    return guest_df
+    try:
+        raw_guest_df = pd.read_csv(DATA_FILENAME, parse_dates=['Date', 'RSVP date'])
+        
+        # Display DataFrame info for debugging
+        st.write("DataFrame Info:")
+        st.write(raw_guest_df.info())
+        
+        # Display column names
+        st.write("Column Names:")
+        st.write(raw_guest_df.columns.tolist())
+        
+        # Ensure that 'Name' column exists
+        if 'Name' not in raw_guest_df.columns:
+            st.error("The dataset does not contain a 'Name' column.")
+            # Try to identify a column that might represent names
+            possible_name_columns = [col for col in raw_guest_df.columns if 'name' in col.lower()]
+            if possible_name_columns:
+                st.warning(f"Possible name columns found: {possible_name_columns}")
+                # Use the first possible name column
+                raw_guest_df['Name'] = raw_guest_df[possible_name_columns[0]]
+            else:
+                return pd.DataFrame()  # Return an empty DataFrame to prevent further issues
+        
+        return raw_guest_df
+    except Exception as e:
+        st.error(f"An error occurred while reading the data: {str(e)}")
+        return pd.DataFrame()
 
 guest_df = get_guest_data()
 
@@ -29,48 +51,51 @@ def clear_input():
     st.session_state.input_name = ''
     st.query_params.clear()  # Clear query parameters
 
-# Calculate total invites and number of 'Going' statuses
-total_invites = guest_df.groupby('Date').size().reset_index(name='Total Invites')
-going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Date').size().reset_index(name='Going Count')
-
-# Calculate the Going/Invite Ratio
-invites_and_goings = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
-invites_and_goings['Going/Invite Ratio'] = (invites_and_goings['Going Count'] / invites_and_goings['Total Invites']) * 100
-
-# Calculate the breakdown of attendees
-attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
-attendee_breakdown.columns = ['Status', 'Count']
-
-# Calculate average response time
-guest_df['ResponseTime'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
-average_response_time = guest_df['ResponseTime'].mean()
-
-# Fun General Event Metrics
-if 'Name' in guest_df.columns:
-    attendance_df = pd.merge(guest_df[['Name', 'Date']], going_count, on='Date', how='left').fillna(0)
-    attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
-    filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
-
-    top_5_ratio = filtered_attendance_df.sort_values(by='Going Count', ascending=False).head(5).reset_index()
-    top_5_maybe = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count').sort_values(by='Maybe Count', ascending=False).head(5)
-
-    # Select only the 'Name' column for display
-    top_5_names = top_5_ratio[['Name']]
-    top_5_maybe_names = top_5_maybe[['Name']]
+if not guest_df.empty:
+    # Your existing code here...
+    # Make sure to use 'Name' column only if it exists
+    if 'Name' in guest_df.columns:
+        # Calculate total invites and number of 'Going' statuses
+        total_invites = guest_df.groupby('Date').size().reset_index(name='Total Invites')
+        going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Date').size().reset_index(name='Going Count')
+        
+        # Calculate the Going/Invite Ratio
+        invites_and_goings = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
+        invites_and_goings['Going/Invite Ratio'] = (invites_and_goings['Going Count'] / invites_and_goings['Total Invites']) * 100
+        
+        # Calculate the breakdown of attendees
+        attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
+        attendee_breakdown.columns = ['Status', 'Count']
+        
+        # Calculate average response time
+        guest_df['ResponseTime'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
+        average_response_time = guest_df['ResponseTime'].mean()
+        
+        # Fun General Event Metrics
+        attendance_df = pd.merge(guest_df[['Name', 'Date']], going_count, on='Date', how='left').fillna(0)
+        attendance_df = attendance_df[attendance_df['Going Count'] > 2]
+        filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
+        top_5_ratio = filtered_attendance_df.sort_values(by='Going Count', ascending=False).head(5).reset_index()
+        top_5_maybe = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count').sort_values(by='Maybe Count', ascending=False).head(5)
+        
+        # Select only the 'Name' column for display
+        top_5_names = top_5_ratio[['Name']]
+        top_5_maybe_names = top_5_maybe[['Name']]
+        
+        # Calculate Attendance Rate
+        attendance_rate_percentage = ((guest_df['Status'] == 'Going').sum() / len(guest_df)) * 100
+        formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
+    else:
+        st.error("'Name' column is missing from the dataset. Unable to calculate metrics.")
 else:
-    st.error("The 'Name' column is missing from the dataset.")
-
-# Calculate Attendance Rate
-attendance_rate_percentage = ((guest_df['Status'] == 'Going').sum() / len(guest_df)) * 100
-formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
+    st.error("No data available. Please check your data source.")
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
-
 # Set the title that appears at the top of the page.
-'''
-# :game_die: Board Game Night Analytics!:game_die:
+st.title('🎲 Board Game Night Analytics! 🎲')
 
+'''
 All data is exported from the guest lists from my [Partiful Invites](https://www.partiful.com/). The data in this,
 just reflects up until board game night that was on July 18. This dashboard will evolve as I add more filtering and inputs.
 '''
