@@ -52,21 +52,7 @@ top_5_maybe_names = top_5_maybe[['Name']]
 attendance_rate_percentage = ((guest_df['Status'] == 'Going').sum() / len(guest_df)) * 100
 formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
 
-# Calculate total invites and number of 'Going' statuses by Date
-total_invites_by_date = guest_df.groupby('Date').size().reset_index(name='Total Invites')
-going_count_by_date = guest_df[guest_df['Status'] == 'Going'].groupby('Date').size().reset_index(name='Going Count')
 
-# Merge the dataframes for invites and going counts by Date
-invites_and_goings = pd.merge(total_invites_by_date, going_count_by_date, on='Date', how='left').fillna(0)
-invites_and_goings['Going/Invite Ratio'] = (invites_and_goings['Going Count'] / invites_and_goings['Total Invites']) * 100
-
-# Calculate the breakdown of attendees
-attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
-attendee_breakdown.columns = ['Status', 'Count']
-
-# Calculate average response time
-guest_df['ResponseTime'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
-average_response_time = guest_df['ResponseTime'].mean()
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
