@@ -52,7 +52,11 @@ filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Toma
 
 # Sort by the Going Ratio and select the top 5
 top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5).reset_index(drop=True)
+top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5).reset_index(drop=True)
+
+# Select only the 'Name' column for display
 top_5_names = top_5_ratio[['Name']]
+top_5_maybe_names = top_5_maybe[['Name']]
 
 # Calculate the combined count of 'Going' and 'Maybe' statuses
 going_count_1 = guest_df[guest_df['Status'] == 'Going'].shape[0]
