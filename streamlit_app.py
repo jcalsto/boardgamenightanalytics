@@ -31,22 +31,22 @@ def clear_input():
     st.query_params.clear()  # Clear query parameters
 
 # Calculate total invites and number of 'Going' statuses
-total_invites = guest_df.groupby('EventDate').size().reset_index(name='Total Invites')
-going_count = guest_df[guest_df['Status'] == 'Going'].groupby('EventDate').size().reset_index(name='Going Count')
+total_invites = guest_df.groupby('Date').size().reset_index(name='Total Invites')
+going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Date').size().reset_index(name='Going Count')
 
 # Merge the dataframes for the line chart
-invites_and_goings = pd.merge(total_invites, going_count, on='EventDate', how='left').fillna(0)
+invites_and_goings = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
 
 # Calculate the breakdown of attendees
 attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
 attendee_breakdown.columns = ['Status', 'Count']
 
 # Calculate average response time
-guest_df['ResponseTime'] = (guest_df['EventDate'] - guest_df['ResponseTimestamp']).dt.days
-average_response_time = guest_df['ResponseTime'].mean()
+guest_df['RSVP date'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
+average_response_time = guest_df['RSVP date'].mean()
 
 # Calculate the top regulars, attendance metrics, and indecisive attendees
-attendance_df = pd.merge(total_invites, going_count, on='EventDate', how='left').fillna(0)
+attendance_df = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
 attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
 
 filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
