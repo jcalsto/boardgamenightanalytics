@@ -50,8 +50,13 @@ top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=Fal
 top_5_names = top_5_ratio[['Name']]
 top_5_maybe_names = top_5_maybe[['Name']]
 
-# Calculate Attendance Rate
-attendance_rate_percentage = ((guest_df['Status'] == 'Going').sum() / len(guest_df)) * 100
+# Calculate the combined count of 'Going' and 'Maybe' statuses
+going_count_1 = guest_df[guest_df['Status'] == 'Going'].shape[0]
+maybe_count_1 = guest_df[guest_df['Status'] == 'Maybe'].shape[0]
+
+# Calculate the attendance rate including 'Going' and 'Maybe'
+total_attendance = going_count_1 + maybe_count_1
+attendance_rate_percentage = (total_attendance / len(guest_df)) * 100
 formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
 
 # Calculate total invites and number of 'Going' statuses by Date
