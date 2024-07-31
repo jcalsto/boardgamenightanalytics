@@ -95,7 +95,7 @@ with col1:
 with col2:
     st.write('Overall Attendance Metrics')
     st.metric("Total Invites", len(guest_df))
-    st.metric("Total Going", total_attendance)
+    st.metric("Total Going", going_count_1)
     st.metric("Attendance Rate", formatted_attendance_rate)
 
 with col3:
