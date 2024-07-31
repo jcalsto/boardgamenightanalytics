@@ -101,11 +101,11 @@ st.write("")
 
 # Line chart for Invites and Goings over time
 st.write("### Invites and Goings Over Time")
-st.line_chart(invites_and_goings.set_index('Date'))
+
 
 # Visualization for Breakdown of Attendees using Streamlit's native pie chart
 st.write("### Breakdown of Attendees")
-st.pie_chart(attendee_breakdown.set_index('Status'))
+
 
 # Average Response Time
 st.write("### Average Response Time")
