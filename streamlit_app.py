@@ -91,7 +91,7 @@ st.write("")
 
 # Line chart for Invites and Goings over time
 st.write("### Invites and Goings Over Time")
-st.line_chart(invites_and_goings.set_index('EventDate'))
+st.line_chart(invites_and_goings.set_index('Date'))
 
 # Visualization for Breakdown of Attendees
 st.write("### Breakdown of Attendees")
