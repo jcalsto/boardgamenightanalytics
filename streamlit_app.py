@@ -28,13 +28,13 @@ def clear_input():
     st.session_state.input_name = ''
     st.query_params.clear()  # Clear query parameters
 
-# Identify the last four events
-last_four_events = guest_df['Date'].dropna().sort_values().unique()[-4:]
+# Identify the last five events
+last_five_events = guest_df['Date'].dropna().sort_values().unique()[-5:]
 
-# Filter the dataframe to include only attendees of the last four events
-recent_events_df = guest_df[guest_df['Date'].isin(last_four_events)]
+# Filter the dataframe to include only attendees of the last five events
+recent_events_df = guest_df[guest_df['Date'].isin(last_five_events)]
 
-# Calculate metrics for attendees of the last four events
+# Calculate metrics for attendees of the last five events
 total_invites = recent_events_df.groupby('Name').size().reset_index(name='Total Invites')
 going_count = recent_events_df[recent_events_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Going Count')
 maybe_count = recent_events_df[recent_events_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count')
