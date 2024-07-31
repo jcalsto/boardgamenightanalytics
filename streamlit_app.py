@@ -134,10 +134,24 @@ with tab1:
 
 with tab2:
     st.write("### Breakdown of Attendees")
-    fig, ax = plt.subplots()
-    ax.pie(attendee_breakdown['Count'], labels=attendee_breakdown['Status'], autopct='%1.1f%%', startangle=90)
-    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    st.pyplot(fig)
+    fig = go.Figure(go.Bar(
+        x=attendee_breakdown['Status'],
+        y=attendee_breakdown['Count'],
+        text=[f"Count: {count}" for count in attendee_breakdown['Count']],
+        hoverinfo='text',
+        marker_color='indianred'
+    ))
+
+    # Customize the layout
+    fig.update_layout(
+        title="Breakdown of Attendees",
+        xaxis_title="Status",
+        yaxis_title="Count",
+        hovermode="x unified"
+    )
+
+    # Show the plot
+    st.plotly_chart(fig)
 
 with tab3:
     st.write("### Average Response Time")
