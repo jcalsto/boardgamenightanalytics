@@ -31,23 +31,25 @@ def clear_input():
     st.query_params.clear()  # Clear query parameters
 
 # Calculate total invites and number of 'Going' statuses
-total_invites = guest_df.groupby('Name').size().reset_index(name='Total Invites')
-going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Name').size().reset_index(name='Going Count')
-maybe_count = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count')
+total_invites = guest_df.groupby('EventDate').size().reset_index(name='Total Invites')
+going_count = guest_df[guest_df['Status'] == 'Going'].groupby('EventDate').size().reset_index(name='Going Count')
 
+# Merge the dataframes for the line chart
+invites_and_goings = pd.merge(total_invites, going_count, on='EventDate', how='left').fillna(0)
 
-# Merge the dataframes to calculate the ratio
-attendance_df = pd.merge(total_invites, going_count, on='Name', how='left').fillna(0)
-attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fillna(0)
-attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
+# Calculate the breakdown of attendees
+attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
+attendee_breakdown.columns = ['Status', 'Count']
 
+# Calculate average response time
+guest_df['ResponseTime'] = (guest_df['EventDate'] - guest_df['ResponseTimestamp']).dt.days
+average_response_time = guest_df['ResponseTime'].mean()
+
+# Calculate the top regulars, attendance metrics, and indecisive attendees
+attendance_df = pd.merge(total_invites, going_count, on='EventDate', how='left').fillna(0)
 attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
 
 filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
-attendance_rate_percentage = ((guest_df['Status'].isin(['Going', 'Maybe']).sum()) / len(guest_df)) * 100
-formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
-
-# Sort by the Going Ratio and select the top 5
 top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5).reset_index()
 top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5).reset_index()
 
@@ -84,8 +86,27 @@ with col3:
     st.dataframe(top_5_maybe_names)
 
 # Add some spacing
-''
-''
+st.write("")
+st.write("")
+
+# Line chart for Invites and Goings over time
+st.write("### Invites and Goings Over Time")
+st.line_chart(invites_and_goings.set_index('EventDate'))
+
+# Visualization for Breakdown of Attendees
+st.write("### Breakdown of Attendees")
+fig, ax = plt.subplots()
+ax.pie(attendee_breakdown['Count'], labels=attendee_breakdown['Status'], autopct='%1.1f%%', startangle=90)
+ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+st.pyplot(fig)
+
+# Average Response Time
+st.write("### Average Response Time")
+st.write(f"The average response time is {average_response_time:.2f} days.")
+
+# Add some spacing
+st.write("")
+st.write("")
 
 if 'input_name' not in st.session_state:
     st.session_state.input_name = ''
