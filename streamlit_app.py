@@ -107,7 +107,7 @@ with col3:
 # Tabs for visualizations
 tab1, tab2, tab3, tab4 = st.tabs(["Going/Invite Ratio Over Time", "Breakdown of Attendees", "Average Response Time", "Input Name"])
 
-with tab1:
+with tab2:
     st.write("### Going/Invite Ratio Over Time")
     fig = go.Figure()
 
@@ -132,7 +132,7 @@ with tab1:
     # Show the plot
     st.plotly_chart(fig)
 
-with tab2:
+with tab3:
     st.write("### Breakdown of Attendees")
     fig = go.Figure(go.Bar(
         x=attendee_breakdown['Status'],
@@ -153,11 +153,11 @@ with tab2:
     # Show the plot
     st.plotly_chart(fig)
 
-with tab3:
+with tab4:
     st.write("### Average Response Time")
     st.write(f"The average response time is {average_response_time:.2f} days.")
 
-with tab4:
+with tab1:
     st.write("### Input Name")
     if 'input_name' not in st.session_state:
         st.session_state.input_name = ''
