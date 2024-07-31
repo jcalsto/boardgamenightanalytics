@@ -37,7 +37,7 @@ if name:
             formatted_attendance_rate = "N/A"
         
         # Calculate average response time
-        filtered_df['ResponseTime'] = (filtered_df['Date'] - filtered_df['RSVP date'].dt.normalize())
+        filtered_df['ResponseTime'] = (filtered_df['Date'] - filtered_df['RSVP date'].dt.normalize()).dt.days
         average_response_time = filtered_df['ResponseTime'].mean()
         
         # Create three columns
