@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 from pathlib import Path
 
 # Set the title and favicon that appear in the Browser's tab bar.
@@ -17,55 +18,32 @@ def get_guest_data():
     """
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
     DATA_FILENAME = Path(__file__).parent / 'data/Main_Guest_Table.csv'
-    raw_guest_df = pd.read_csv(DATA_FILENAME)
+    raw_guest_df = pd.read_csv(DATA_FILENAME, parse_dates=['Date', 'RSVP date'])
 
-    # Ensure that Date and RSVP date are in datetime format
-    raw_guest_df['Date'] = pd.to_datetime(raw_guest_df['Date'], errors='coerce')
-    raw_guest_df['RSVP date'] = pd.to_datetime(raw_guest_df['RSVP date'], errors='coerce')
+    guest_df = raw_guest_df
 
-    return raw_guest_df
+    return guest_df
 
 guest_df = get_guest_data()
 
 def clear_input():
     st.session_state.input_name = ''
-    st.query_params.clear()  # Clear query parameters
+    st.experimental_set_query_params()  # Clear query parameters
 
 # Calculate total invites and number of 'Going' statuses
-total_invites = guest_df.groupby(['Date', 'Name']).size().reset_index(name='Total Invites')
-going_count = guest_df[guest_df['Status'] == 'Going'].groupby(['Date', 'Name']).size().reset_index(name='Going Count')
+total_invites = guest_df.groupby('Date').size().reset_index(name='Total Invites')
+going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Date').size().reset_index(name='Going Count')
 
 # Merge the dataframes for the line chart
-invites_and_goings = pd.merge(total_invites.groupby('Date').sum().reset_index(), 
-                              going_count.groupby('Date').sum().reset_index(), 
-                              on='Date', how='left').fillna(0)
-
-# Calculate the attendance metrics
-attendance_df = pd.merge(total_invites, going_count, on=['Date', 'Name'], how='left').fillna(0)
-attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
-
-# Calculate 'Maybe Count'
-maybe_count = guest_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count')
-attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fillna(0)
-
-# Filter for more than 2 events
-attendance_df = attendance_df.groupby('Name').filter(lambda x: x['Total Invites'].sum() > 2)
-
-filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
-top_5_ratio = filtered_attendance_df.groupby('Name')['Going Ratio'].mean().sort_values(ascending=False).head(5).reset_index()
-top_5_maybe = filtered_attendance_df.groupby('Name')['Maybe Count'].sum().sort_values(ascending=False).head(5).reset_index()
-
-# Select only the 'Name' column for display
-top_5_names = top_5_ratio[['Name']]
-top_5_maybe_names = top_5_maybe[['Name']]
+invites_and_goings = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
 
 # Calculate the breakdown of attendees
 attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
 attendee_breakdown.columns = ['Status', 'Count']
 
 # Calculate average response time
-guest_df['RSVP date'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
-average_response_time = guest_df['RSVP date'].mean()
+guest_df['ResponseTime'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
+average_response_time = guest_df['ResponseTime'].mean()
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
@@ -79,33 +57,17 @@ just reflects up until board game night that was on July 18. This dashboard will
 '''
 
 st.subheader('Fun General Event Metrics')
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.write('Top 5 Regulars (2+ events):')
-    st.dataframe(top_5_names)
-
-with col2:
-    st.write('Overall Attendance Metrics')
-    st.metric("Total Invites", len(guest_df))
-    st.metric("Total Going", len(guest_df[guest_df['Status'] == 'Going']))
-    st.metric("Attendance Rate", f"{(len(guest_df[guest_df['Status'] == 'Going']) / len(guest_df) * 100):.2f}%")
-
-with col3:
-    st.write('Top 5 Most Indecisive Attendees')
-    st.dataframe(top_5_maybe_names)
-
-# Add some spacing
-st.write("")
-st.write("")
 
 # Line chart for Invites and Goings over time
 st.write("### Invites and Goings Over Time")
+st.line_chart(invites_and_goings.set_index('Date'))
 
-
-# Visualization for Breakdown of Attendees using Streamlit's native pie chart
+# Visualization for Breakdown of Attendees
 st.write("### Breakdown of Attendees")
-
+fig, ax = plt.subplots()
+ax.pie(attendee_breakdown['Count'], labels=attendee_breakdown['Status'], autopct='%1.1f%%', startangle=90)
+ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+st.pyplot(fig)
 
 # Average Response Time
 st.write("### Average Response Time")
@@ -138,21 +100,21 @@ with col1:
     if st.button("View Details"):
         if valid_name:
             # Navigate to the detailed information page with the provided name
-            st.query_params.update(page="details", name=input_name)
-            st.rerun()  # This will rerun the script with the new query parameters
+            st.experimental_set_query_params(page="details", name=input_name)
+            st.experimental_rerun()  # This will rerun the script with the new query parameters
         else:
             validation_result.error("Name not found. Please check the spelling or try again.")
 
 with col2:
     if st.button("Clear"):
         st.session_state.input_name = ''
-        st.query_params.clear()  # Clear query parameters
-        st.rerun()  # This will rerun the script and clear the input
+        st.experimental_set_query_params()  # Clear query parameters
+        st.experimental_rerun()  # This will rerun the script and clear the input
 
 # Page navigation based on query params
-query_params = st.query_params.to_dict()
-if query_params.get("page") == "details":
-    name = query_params.get("name")
+query_params = st.experimental_get_query_params()
+if query_params.get("page") == ["details"]:
+    name = query_params.get("name", [None])[0]
     if name:
         # Make sure 'details.py' is in the same directory as this script
         exec(open("details.py").read())
