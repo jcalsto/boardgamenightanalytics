@@ -32,7 +32,8 @@ def clear_input():
 last_five_events = guest_df['Date'].dropna().sort_values().unique()[-5:]
 
 # Filter the dataframe to include only attendees of the last five events
-recent_events_df = guest_df[guest_df['Date'].isin(last_five_events)]
+recent_attendees_list = guest_df[guest_df['Date'].isin(last_five_events) & guest_df['Status'].isin(['Going', 'Maybe'])]['Name'].unique()
+recent_events_df = guest_df[guest_df['Name'].isin(recent_attendees_list)]
 
 # Calculate metrics for attendees of the last five events
 total_invites = recent_events_df.groupby('Name').size().reset_index(name='Total Invites')
@@ -45,7 +46,7 @@ attendance_df = pd.merge(attendance_df, maybe_count, on='Name', how='left').fill
 attendance_df['Going Ratio'] = attendance_df['Going Count'] / attendance_df['Total Invites']
 
 # Filter out attendees with fewer than 3 total invites
-attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
+attendance_df = attendance_df[attendance_df['Total Invites'] > 3]
 
 # Exclude "Jorrel Sto Tomas" for top 5 ratio calculation
 filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
