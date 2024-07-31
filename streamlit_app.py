@@ -34,8 +34,9 @@ def clear_input():
 total_invites = guest_df.groupby('Date').size().reset_index(name='Total Invites')
 going_count = guest_df[guest_df['Status'] == 'Going'].groupby('Date').size().reset_index(name='Going Count')
 
-# Merge the dataframes for the line chart
+# Calculate the Going/Invite Ratio
 invites_and_goings = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
+invites_and_goings['Going/Invite Ratio'] = (invites_and_goings['Going Count'] / invites_and_goings['Total Invites']) * 100
 
 # Calculate the breakdown of attendees
 attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
@@ -44,6 +45,22 @@ attendee_breakdown.columns = ['Status', 'Count']
 # Calculate average response time
 guest_df['ResponseTime'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
 average_response_time = guest_df['ResponseTime'].mean()
+
+# Fun General Event Metrics
+attendance_df = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
+attendance_df = attendance_df[attendance_df['Total Invites'] > 2]
+filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Tomas']
+
+top_5_ratio = filtered_attendance_df.sort_values(by='Going Count', ascending=False).head(5).reset_index()
+top_5_maybe = filtered_attendance_df[guest_df['Status'] == 'Maybe'].groupby('Name').size().reset_index(name='Maybe Count').sort_values(by='Maybe Count', ascending=False).head(5)
+
+# Select only the 'Name' column for display
+top_5_names = top_5_ratio[['Name']]
+top_5_maybe_names = top_5_maybe[['Name']]
+
+# Calculate Attendance Rate
+attendance_rate_percentage = ((guest_df['Status'] == 'Going').sum() / len(guest_df)) * 100
+formatted_attendance_rate = f"{attendance_rate_percentage:.2f}%"
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
@@ -57,21 +74,39 @@ just reflects up until board game night that was on July 18. This dashboard will
 '''
 
 st.subheader('Fun General Event Metrics')
+col1, col2, col3 = st.columns(3)
 
-# Line chart for Invites and Goings over time
-st.write("### Invites and Goings Over Time")
-st.line_chart(invites_and_goings.set_index('Date'))
+with col1:
+    st.write('Top 5 Regulars (2+ events):')
+    st.dataframe(top_5_names)
 
-# Visualization for Breakdown of Attendees
-st.write("### Breakdown of Attendees")
-fig, ax = plt.subplots()
-ax.pie(attendee_breakdown['Count'], labels=attendee_breakdown['Status'], autopct='%1.1f%%', startangle=90)
-ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-st.pyplot(fig)
+with col2:
+    st.write('Overall Attendance Metrics')
+    st.metric("Total Invites", len(guest_df))
+    st.metric("Total Going", len(guest_df[guest_df['Status'] == 'Going']))
+    st.metric("Attendance Rate", formatted_attendance_rate)
 
-# Average Response Time
-st.write("### Average Response Time")
-st.write(f"The average response time is {average_response_time:.2f} days.")
+with col3:
+    st.write('Top 5 Most Indecisive Attendees')
+    st.dataframe(top_5_maybe_names)
+
+# Tabs for visualizations
+tab1, tab2, tab3 = st.tabs(["Going/Invite Ratio Over Time", "Breakdown of Attendees", "Average Response Time"])
+
+with tab1:
+    st.write("### Going/Invite Ratio Over Time")
+    st.line_chart(invites_and_goings.set_index('Date')['Going/Invite Ratio'])
+
+with tab2:
+    st.write("### Breakdown of Attendees")
+    fig, ax = plt.subplots()
+    ax.pie(attendee_breakdown['Count'], labels=attendee_breakdown['Status'], autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    st.pyplot(fig)
+
+with tab3:
+    st.write("### Average Response Time (time from invite to response)")
+    st.write(f"The average response time is {average_response_time:.2f} days.")
 
 # Add some spacing
 st.write("")
