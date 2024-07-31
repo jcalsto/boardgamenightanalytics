@@ -155,8 +155,10 @@ with col2:
         st.rerun()  # This will rerun the script and clear the input
 
 # Page navigation based on query params
-if st.query_params.page == "details":
-    name = st.query_params.get("name", None)
+query_params = st.query_params.to_dict()
+page = query_params.get("page", [None])[0]  # Default to None if "page" is not in the query params
+if page == "details":
+    name = query_params.get("name", [None])[0]
     if name:
         # Make sure 'details.py' is in the same directory as this script
         exec(open("details.py").read())
