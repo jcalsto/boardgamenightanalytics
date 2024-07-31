@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 from pathlib import Path
 
 # Set the title and favicon that appear in the Browser's tab bar.
 st.set_page_config(
     page_title='Board Game Night Analytics!',
-    page_icon=':game_die:', # This is an emoji shortcode. Could be a URL too.
+    page_icon=':game_die:',  # This is an emoji shortcode. Could be a URL too.
 )
 
 # -----------------------------------------------------------------------------
@@ -15,14 +16,15 @@ st.set_page_config(
 def get_guest_data():
     """Grab guest list data to be used over and over again
     """
-
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/Main_Guest_Table.csv'
+    DATA_FILENAME = Path(__file__).parent / 'data/Main_Guest_Table.csv'
     raw_guest_df = pd.read_csv(DATA_FILENAME)
 
-    guest_df = raw_guest_df
+    # Ensure that Date and RSVP date are in datetime format
+    raw_guest_df['Date'] = pd.to_datetime(raw_guest_df['Date'], errors='coerce')
+    raw_guest_df['RSVP date'] = pd.to_datetime(raw_guest_df['RSVP date'], errors='coerce')
 
-    return guest_df
+    return raw_guest_df
 
 guest_df = get_guest_data()
 
@@ -42,8 +44,8 @@ attendee_breakdown = guest_df['Status'].value_counts().reset_index(name='Count')
 attendee_breakdown.columns = ['Status', 'Count']
 
 # Calculate average response time
-guest_df['RSVP date'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
-average_response_time = guest_df['RSVP date'].mean()
+guest_df['ResponseTime'] = (guest_df['Date'] - guest_df['RSVP date']).dt.days
+average_response_time = guest_df['ResponseTime'].mean()
 
 # Calculate the top regulars, attendance metrics, and indecisive attendees
 attendance_df = pd.merge(total_invites, going_count, on='Date', how='left').fillna(0)
@@ -79,7 +81,7 @@ with col2:
     st.write('Overall Attendance Metrics')
     st.metric("Total Invites", len(guest_df))
     st.metric("Total Going", len(guest_df[guest_df['Status'] == 'Going']))
-    st.metric("Attendance Rate", formatted_attendance_rate)
+    st.metric("Attendance Rate", f"{(len(guest_df[guest_df['Status'] == 'Going']) / len(guest_df) * 100):.2f}%")
 
 with col3:
     st.write('Top 5 Most Indecisive Attendees')
@@ -134,12 +136,12 @@ with col1:
             st.query_params.update(page="details", name=input_name)
             st.rerun()  # This will rerun the script with the new query parameters
         else:
-            st.error("Name not found. Please check the spelling or try again.")
+            validation_result.error("Name not found. Please check the spelling or try again.")
 
 with col2:
     if st.button("Clear"):
         st.session_state.input_name = ''
-        st.query_params.clear()# Clear query parameters
+        st.query_params.clear()  # Clear query parameters
         st.rerun()  # This will rerun the script and clear the input
 
 # Page navigation based on query params
