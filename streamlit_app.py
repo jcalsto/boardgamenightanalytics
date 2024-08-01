@@ -66,13 +66,13 @@ top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=Fal
 top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5).reset_index(drop=True)
 
 #obfuscate the last names to protect information
-top_5_ratio['Obfuscated Name'] = top_5_ratio['Name'].apply(obfuscate_name)
-top_5_maybe['Obfuscated Name'] = top_5_ratio['Name'].apply(obfuscate_name)
+top_5_ratio['Short Name'] = top_5_ratio['Name'].apply(obfuscate_name)
+top_5_maybe['Short Name'] = top_5_ratio['Name'].apply(obfuscate_name)
 
 
 # Select only the 'Name' column for display
-top_5_names = top_5_ratio[['Obfuscated Name']]
-top_5_maybe_names = top_5_maybe[['Obfuscated Name']]
+top_5_names = top_5_ratio[['Short Name']]
+top_5_maybe_names = top_5_maybe[['Short Name']]
 
 # Calculate the combined count of 'Going' and 'Maybe' statuses
 going_count_1 = guest_df[guest_df['Status'] == 'Going'].shape[0]
