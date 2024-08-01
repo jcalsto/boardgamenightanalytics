@@ -28,6 +28,16 @@ def clear_input():
     st.session_state.input_name = ''
     st.query_params.clear()  # Clear query parameters
 
+def obfuscate_name(name):
+    """Obfuscate the last name, leaving only the first initial."""
+    if len(name.split()) > 1:
+        first_name, last_name = name.split(' ', 1)
+        last_initial = last_name[0] if last_name else ''
+        return f"{first_name} {last_initial}."
+    else:
+        return name  # Return as is if no last name is found
+
+
 # Identify the last five events
 last_five_events = guest_df['Date'].dropna().sort_values().unique()[-5:]
 
@@ -55,9 +65,14 @@ filtered_attendance_df = attendance_df[attendance_df['Name'] != 'Jorrel Sto Toma
 top_5_ratio = filtered_attendance_df.sort_values(by='Going Ratio', ascending=False).head(5).reset_index(drop=True)
 top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=False).head(5).reset_index(drop=True)
 
+#obfuscate the last names to protect information
+top_5_ratio['Obfuscated Name'] = top_5_ratio['Name'].apply(obfuscate_name)
+top_5_maybe['Obfuscated Name'] = top_5_ratio['Name'].apply(obfuscate_name)
+
+
 # Select only the 'Name' column for display
-top_5_names = top_5_ratio[['Name']]
-top_5_maybe_names = top_5_maybe[['Name']]
+top_5_names = top_5_ratio[['Obfuscated Name']]
+top_5_maybe_names = top_5_maybe[['Obfuscated Name']]
 
 # Calculate the combined count of 'Going' and 'Maybe' statuses
 going_count_1 = guest_df[guest_df['Status'] == 'Going'].shape[0]
