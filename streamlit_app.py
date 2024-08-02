@@ -67,7 +67,7 @@ top_5_maybe = filtered_attendance_df.sort_values(by='Maybe Count', ascending=Fal
 
 #obfuscate the last names to protect information
 top_5_ratio['Short Name'] = top_5_ratio['Name'].apply(obfuscate_name)
-top_5_maybe['Short Name'] = top_5_ratio['Name'].apply(obfuscate_name)
+top_5_maybe['Short Name'] = top_5_maybe['Name'].apply(obfuscate_name)
 
 
 # Select only the 'Name' column for display
