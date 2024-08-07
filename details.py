@@ -13,6 +13,19 @@ def get_guest_data():
 
 guest_df = get_guest_data()
 
+# Define the weights for each RSVP status
+weights = {
+    'Going': 0.9,
+    'Maybe': 0.5,
+    'Can\'t Go': 0.1}
+
+# Function to calculate attendance likelihood
+def calculate_attendance_likelihood(status):
+    return weights.get(status, 0)  # Default to 0 if the status is not recognized
+
+# Apply the function to the Main Guest Table dataframe to calculate attendance likelihood for each guest
+guest_df['Attendance Likelihood'] = guest_df['Status'].apply(calculate_attendance_likelihood)
+
 # Get the name from query params
 query_params = st.query_params.to_dict()
 name = query_params.get("name", [None])
@@ -29,6 +42,8 @@ if name:
         attended_events = filtered_df['Status'].isin(['Going', 'Maybe']).sum()
         going_events = filtered_df['Status'].eq('Going').sum()
         maybe_events = filtered_df['Status'].eq('Maybe').sum()
+        attend_chance = filtered_df['Attendance Likelihood'].mean()
+        formatted_attend_chance = f"{attend_chance * 100:.2f}%"
         
         if total_invites > 0:
             attendance_rate = attended_events / total_invites
@@ -49,6 +64,7 @@ if name:
             st.metric("Personal Attendance Rate", formatted_attendance_rate)
             st.metric("Total Invites", total_invites)
             st.metric("Events Attended", attended_events)
+            st.metric("Chance of Attending Next Event", formatted_attend_chance)
 
         # Column 2: Event breakdown
         with col2:
