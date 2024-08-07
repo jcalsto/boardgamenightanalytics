@@ -106,7 +106,7 @@ st.title('🎲 Board Game Night Analytics! 🎲')
 
 '''
 All data is exported from the guest lists from my [Partiful Invites](https://www.partiful.com/). The data in this,
-just reflects up until board game night that was on July 18. This dashboard will evolve as I add more filtering and inputs.
+just reflects up until board game night that was on August 2. This dashboard will evolve as I add more filtering and inputs.
 '''
 
 st.subheader('Fun General Event Metrics')
