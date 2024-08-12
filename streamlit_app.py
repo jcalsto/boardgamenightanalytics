@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from pathlib import Path
-import firebase_admin
-from firebase_admin import credentials
+#import firebase_admin
+#from firebase_admin import credentials
 
 # cred = credentials.Certificate("path/to/serviceAccountKey.json")
 # firebase_admin.initialize_app(cred)
