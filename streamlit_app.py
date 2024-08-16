@@ -127,6 +127,7 @@ with col2:
     st.metric("Total Invites", len(guest_df))
     st.metric("Total Going", going_count_1)
     st.metric("Attendance Rate", formatted_attendance_rate)
+    st.metric("Unique Attendees", guest_df["Name"].unique())
 
 with col3:
     st.write('Top 5 Most Indecisive Attendees')
