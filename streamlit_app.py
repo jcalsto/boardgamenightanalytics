@@ -4,11 +4,25 @@ import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from pathlib import Path
-#import firebase_admin
-#from firebase_admin import credentials
+from google.cloud import firestore
+import json
 
-# cred = credentials.Certificate("path/to/serviceAccountKey.json")
-# firebase_admin.initialize_app(cred)
+# # Authenticate to Firestore with the JSON account key.
+
+# key_dict = json.loads(st.secrets["text_key"])
+# creds = service_account.Credentials.from_service_account_info(key_dict)
+# db = firestore.Client(credentials=creds, project="jorrelseventanalytics")
+
+
+# # Create a reference to the Google post.
+# doc_ref = db.collection("posts").document("Google")
+
+# # Then get the data at that reference.
+# doc = doc_ref.get()
+
+# # Let's see what we got!
+# st.write("The id is: ", doc.id)
+# st.write("The contents are: ", doc.to_dict())
 
 
 # Set the title and favicon that appear in the Browser's tab bar.
