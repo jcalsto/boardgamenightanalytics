@@ -9,7 +9,19 @@ import json
 
 # Authenticate to Firestore with the JSON account key.
 
-key_dict = json.loads(st.secrets.text_key)
+key_dict = {
+    "type": st.secrets["text_key"]["type"],
+    "project_id": st.secrets["text_key"]["project_id"],
+    "private_key_id": st.secrets["text_key"]["private_key_id"],
+    "private_key": st.secrets["text_key"]["private_key"],
+    "client_email": st.secrets["text_key"]["client_email"],
+    "client_id": st.secrets["text_key"]["client_id"],
+    "auth_uri": st.secrets["text_key"]["auth_uri"],
+    "token_uri": st.secrets["text_key"]["token_uri"],
+    "auth_provider_x509_cert_url": st.secrets["text_key"]["auth_provider_x509_cert_url"],
+    "client_x509_cert_url": st.secrets["text_key"]["client_x509_cert_url"],
+    "universe_domain": st.secrets["text_key"]["universe_domain"]
+}
 creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds, project="jorrelseventanalytics")
 
