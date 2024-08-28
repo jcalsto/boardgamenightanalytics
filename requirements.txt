@@ -3,3 +3,4 @@ pandas
 matplotlib
 plotly
 google-cloud-firestore
+firebase_admin
