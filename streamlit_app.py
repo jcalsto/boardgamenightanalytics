@@ -7,22 +7,18 @@ from pathlib import Path
 from google.cloud import firestore
 import json
 
-# # Authenticate to Firestore with the JSON account key.
+# Authenticate to Firestore with the JSON account key.
 
-# key_dict = json.loads(st.secrets["text_key"])
-# creds = service_account.Credentials.from_service_account_info(key_dict)
-# db = firestore.Client(credentials=creds, project="jorrelseventanalytics")
+key_dict = json.loads(st.secrets["text_key"])
+creds = service_account.Credentials.from_service_account_info(key_dict)
+db = firestore.Client(credentials=creds, project="jorrelseventanalytics")
 
 
-# # Create a reference to the Google post.
-# doc_ref = db.collection("posts").document("Google")
+# Create a reference to the Google post.
+doc_ref = db.collection("guest_rsvp").document("HxgAuP3TGdObFAfh9pKI")
 
-# # Then get the data at that reference.
-# doc = doc_ref.get()
-
-# # Let's see what we got!
-# st.write("The id is: ", doc.id)
-# st.write("The contents are: ", doc.to_dict())
+# Then get the data at that reference.
+doc = doc_ref.get()
 
 
 # Set the title and favicon that appear in the Browser's tab bar.
@@ -128,6 +124,10 @@ st.title('🎲 Board Game Night Analytics! 🎲')
 All data is exported from the guest lists from my [Partiful Invites](https://www.partiful.com/). The data in this,
 just reflects up until board game night that was on August 2. This dashboard will evolve as I add more filtering and inputs.
 '''
+
+# Let's see what we got!
+st.write("The id is: ", doc.id)
+st.write("The contents are: ", doc.to_dict())
 
 st.subheader('Fun General Event Metrics')
 col1, col2, col3 = st.columns(3)
